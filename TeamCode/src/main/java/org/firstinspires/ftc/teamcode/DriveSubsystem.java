@@ -31,6 +31,7 @@ public class DriveSubsystem extends SubsystemBase{
     public void periodic() {
         super.periodic();
         updateTelemetry();
+        updateOdometry();
     }
 
     public void drive(double fwd, double rot){
@@ -61,6 +62,9 @@ public class DriveSubsystem extends SubsystemBase{
     public double getAverageDistance(){
         return (getLeftEncoderDistance() + getRightEncoderDistance()) / 2.0;
     }
+
+    private void updateOdometry(){}
+
 
     private void updateTelemetry(){
         double pow = _leftMotor.motor.getPower();
