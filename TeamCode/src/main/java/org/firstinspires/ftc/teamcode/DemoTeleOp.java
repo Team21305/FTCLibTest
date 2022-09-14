@@ -28,7 +28,7 @@ public class DemoTeleOp extends CommandOpMode {
         // Create DriveSubsystem
         _drive = new DriveSubsystem(_left, _right, 100.0);
 
-        // Create Gamepad
+        // Create GamePad
         _driverOp = new GamepadEx(gamepad1);
 
         // Create DefaultDrive command
