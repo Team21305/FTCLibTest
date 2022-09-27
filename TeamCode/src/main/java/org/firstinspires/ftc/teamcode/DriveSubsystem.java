@@ -1,11 +1,17 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
-
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.drivebase.DifferentialDrive;
 import com.arcrobotics.ftclib.hardware.motors.Motor.Encoder;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
+import com.arcrobotics.ftclib.hardware.motors.MotorGroup;
+import com.qualcomm.hardware.bosch.BNO055IMU;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 public class DriveSubsystem extends SubsystemBase{
 
@@ -13,18 +19,25 @@ public class DriveSubsystem extends SubsystemBase{
     private final Encoder _leftEnc;
     @androidx.annotation.NonNull
     private final MotorEx _leftMotor;
+    private final MotorEx _rightMotor;
     private final Encoder _rightEnc;
 
+    private final Telemetry _telem;
     private final double WHEEL_DIAMETER;
+    private final BNO055IMU _imu;
 
-    public DriveSubsystem(MotorEx leftMotor, MotorEx rightMotor, final double diameter) {
+    public DriveSubsystem(MotorEx leftMotor, MotorEx rightMotor, MotorEx leftRearMotor, MotorEx rightRearMotor, BNO055IMU imu, Telemetry telem, final double diameter) {
         _leftEnc = leftMotor.encoder;
         _leftMotor = leftMotor;
+        _rightMotor = rightMotor;
         _rightEnc = rightMotor.encoder;
+        _telem = telem;
 
         WHEEL_DIAMETER = diameter;
 
-        _drive = new DifferentialDrive(leftMotor, rightMotor);
+        _imu = imu;
+
+        _drive = new DifferentialDrive(new MotorGroup(leftMotor, leftRearMotor), new MotorGroup(rightMotor, rightRearMotor));
     }
 
     @Override
@@ -65,11 +78,22 @@ public class DriveSubsystem extends SubsystemBase{
 
     private void updateOdometry(){}
 
+    /**
+     * read the raw (un-offset Gyro heading) directly from the IMU
+     */
+    public double getRawHeading() {
+        Orientation angles   = _imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        return angles.firstAngle;
+    }
 
     private void updateTelemetry(){
         double pow = _leftMotor.motor.getPower();
-        telemetry.addData("Left Power", pow);
+        double powR = _rightMotor.motor.getPower();
+        _telem.addData("Left Power", pow);
+        _telem.addData("Right Power", powR);
 
-        telemetry.update();
+        _telem.addData(">", "Robot Heading = %4.0f", getRawHeading());
+
+        _telem.update();
     }
 }
