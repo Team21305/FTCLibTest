@@ -12,10 +12,10 @@ public class LiftSubsystem extends SubsystemBase {
     }
 
     public void goUp(){
-        _servo.setPosition(0.5);
+        _servo.setPosition(1.0);
     }
 
     public void goDown(){
-        _servo.setPosition(0.0);
+        _servo.setPosition(-1.0);
     }
 }
