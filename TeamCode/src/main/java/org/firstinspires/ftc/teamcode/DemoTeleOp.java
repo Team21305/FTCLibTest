@@ -5,6 +5,7 @@ import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.button.Button;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -32,10 +33,10 @@ public class DemoTeleOp extends CommandOpMode {
     public void initialize() {
 
         // Create Motors
-        _left = new MotorEx(hardwareMap, "driveLeftFront");
-        _right = new MotorEx(hardwareMap, "driveRightFront");
-        _leftRear = new MotorEx(hardwareMap, "driveLeftRear");
-        _rightRear = new MotorEx(hardwareMap, "driveRightRear");
+        _left = new MotorEx(hardwareMap, "driveLeftFront", Motor.GoBILDA.RPM_312);
+        _right = new MotorEx(hardwareMap, "driveRightFront", Motor.GoBILDA.RPM_312);
+        _leftRear = new MotorEx(hardwareMap, "driveLeftRear", Motor.GoBILDA.RPM_312);
+        _rightRear = new MotorEx(hardwareMap, "driveRightRear", Motor.GoBILDA.RPM_312);
 
         _liftServo1 = hardwareMap.get(Servo.class, "servo1");
 
@@ -57,6 +58,7 @@ public class DemoTeleOp extends CommandOpMode {
 
         // Register the drive subsystem with the scheduler
         register(_drive);
+        register(_lift);
 
         // make DefaultDrive the default command for the drive subsystem
         _drive.setDefaultCommand(_defaultDriveCommand);
