@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.drivebase.DifferentialDrive;
+import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.Motor.Encoder;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.arcrobotics.ftclib.hardware.motors.MotorGroup;
@@ -37,7 +38,20 @@ public class DriveSubsystem extends SubsystemBase{
 
         _imu = imu;
 
-        _drive = new DifferentialDrive(new MotorGroup(leftMotor, leftRearMotor), new MotorGroup(rightMotor, rightRearMotor));
+        _rightEnc.setDirection(Motor.Direction.REVERSE);
+
+
+        MotorGroup leftMotors = new MotorGroup(leftMotor, leftRearMotor);
+        MotorGroup rightMotors = new MotorGroup(rightMotor, rightRearMotor);
+
+        leftMotors.setRunMode(Motor.RunMode.VelocityControl);
+        rightMotors.setRunMode(Motor.RunMode.VelocityControl);
+
+        leftMotors.setVeloCoefficients(2.0,0.2, 0.0);
+        rightMotors.setVeloCoefficients(2.0,0.2, 0.0);
+
+        _drive = new DifferentialDrive(leftMotors, rightMotors);
+        _drive.setMaxSpeed(1.0);
     }
 
     @Override
@@ -47,8 +61,8 @@ public class DriveSubsystem extends SubsystemBase{
         updateOdometry();
     }
 
-    public void drive(double fwd, double rot){
-        _drive.arcadeDrive(fwd, rot);
+    public void drive(double fwd, double rot, boolean squareInputs){
+        _drive.arcadeDrive(fwd, rot, squareInputs);
     }
 
     public double getLeftEncoderVal(){
@@ -91,6 +105,9 @@ public class DriveSubsystem extends SubsystemBase{
         double powR = _rightMotor.motor.getPower();
         _telem.addData("Left Power", pow);
         _telem.addData("Right Power", powR);
+
+        _telem.addData("Left Enc", getLeftEncoderVal());
+        _telem.addData("Right Enc", getRightEncoderVal());
 
         _telem.addData(">", "Robot Heading = %4.0f", getRawHeading());
 
