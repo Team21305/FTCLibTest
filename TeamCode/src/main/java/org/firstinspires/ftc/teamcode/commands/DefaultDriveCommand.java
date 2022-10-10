@@ -27,13 +27,9 @@ public class DefaultDriveCommand extends CommandBase {
     public void execute(){
 
         double y = _forward.getAsDouble();
-        double r = _rotation.getAsDouble();
-        if(_squareInputs) {
-            y = Math.pow(_forward.getAsDouble(), 2) * Math.signum(_forward.getAsDouble());
-            r = Math.pow(_rotation.getAsDouble(), 2) * Math.signum(_rotation.getAsDouble());
-        }
+        double r = _rotation.getAsDouble() * 0.55;
 
-        _drive.drive(y, r);
+        _drive.drive(y, r, _squareInputs);
 
     }
 
